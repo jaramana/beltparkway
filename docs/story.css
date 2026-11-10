@@ -1,0 +1,579 @@
+/* Belt Parkway Waterfront: a plain one-column report with pinned map scenes. */
+
+:root {
+  --paper: #ffffff;
+  --paper-sunk: #f4f4f2;
+  --ink: #111111;
+  --ink-soft: #444444;
+  --ink-faint: #6b6b6b;
+  --rule: #d9d9d5;
+  --accent: #0b4a6f;
+  --brand: #0b4a6f;
+  --brand-hover: #083a58;
+  --on-brand: #ffffff;
+  --measure: 40rem;
+  --wide: 68rem;
+  --nav-h: 3rem;
+  --space: clamp(4rem, 10vh, 6rem);
+}
+
+html { scroll-padding-top: calc(var(--nav-h) + 1rem); }
+
+.story-page { padding: 0; counter-reset: sec; }
+.story { position: relative; }
+
+/* ---- Navigation ---------------------------------------------------- */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  min-height: var(--nav-h);
+  padding: 0 var(--gutter);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.site-nav-mark {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-nav-links {
+  display: flex;
+  flex: 1;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: .875rem;
+}
+.site-nav-links a {
+  display: block;
+  padding: .3rem 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-nav-links a:hover { color: var(--ink); }
+.site-nav-links a[aria-current="true"] { border-bottom-color: var(--ink); color: var(--ink); font-weight: 700; }
+.site-nav-toggle { display: none; }
+
+/* Evidence's sections drop down from the nav. On phones they sit indented in the menu. */
+.site-nav-sub { display: none; }
+@media (min-width: 58.01rem) {
+  .has-sub { position: relative; }
+  .has-sub > a::after { content: " \25BE"; }
+
+  /* The panel touches the link, so the pointer can cross without it closing. */
+  .has-sub:not(.shut):hover .site-nav-sub,
+  .has-sub:focus-within .site-nav-sub {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: -1rem;
+    min-width: 13rem;
+    margin: 0;
+    padding: .4rem 1rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 8px 16px rgba(16, 20, 24, .08);
+    list-style: none;
+  }
+  .site-nav-sub a { padding: .35rem 0; border-bottom: 0; white-space: nowrap; }
+}
+
+/* ---- Cover ------------------------------------------------------------ */
+
+/* The cover reads as a first page: the text, then the photo, in the text column. */
+
+.cover {
+  position: relative;
+  z-index: 2;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: clamp(2rem, 6vh, 3.5rem) var(--gutter) 0;
+  background: var(--paper);
+}
+.story-body .cover h1 {
+  margin: 0 0 .85rem;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  line-height: 1.03;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+.cover-premise { margin: 0 0 1.25rem; font-size: 1.3125rem; line-height: 1.4; text-wrap: pretty; }
+.cover-proposal { margin: 0 0 1.25rem; line-height: 1.55; }
+.cover-label { display: block; margin-bottom: .3rem; color: var(--ink-faint); font-size: .8125rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.cover .facts { margin: 0; font-size: .875rem; }
+.cover .facts th, .cover .facts td { padding-top: .45rem; padding-bottom: .45rem; }
+.cover-next { margin: 1.25rem 0 0; font-weight: 700; }
+.cover-next a { text-decoration: none; }
+.cover-next a::after { content: " \2193"; }
+.cover-photo { position: relative; overflow: hidden; aspect-ratio: 3 / 2; margin-top: 2rem; }
+.cover-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 62%; }
+
+/* ---- Section openers ---------------------------------------------------- */
+
+/* A rule, a numeral and the section's name, on the text's left edge. */
+
+.opener {
+  position: relative;
+  z-index: 2;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: var(--space) var(--gutter) 1.75rem;
+  counter-increment: sec;
+}
+.story-body .opener h2 {
+  margin: 0;
+  padding: 1.1rem 0 0;
+  border: 0;
+  border-top: 2px solid var(--ink);
+  font-size: clamp(1.75rem, 3.6vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.opener h2::before { content: counter(sec); margin-right: .6em; color: var(--accent); font-weight: 400; }
+.opener p { margin: .3rem 0 0; color: var(--ink-soft); text-wrap: pretty; }
+.opener + .after { padding-top: 0; }
+.opener + .after > :first-child { margin-top: 0; }
+
+/* On wide screens the numeral hangs in the margin, so the heading lines up with the text. */
+@media (min-width: 50rem) {
+  .story-body .opener h2 { position: relative; }
+  .opener h2::before { position: absolute; right: 100%; margin-right: .55em; }
+}
+
+/* ---- Pinned scenes --------------------------------------------------- */
+
+/* Without scripts, the text simply reads in order. */
+.stage { display: none; }
+
+.js .stage {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+.layer.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .layer { transition: none; }
+}
+
+/* Every picture fills the stage the same way, so overlays stay on their photos. */
+.map-base,
+.layer img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 85%;
+}
+
+.photo-layer img { object-position: 60% 80%; }
+.path-layer img { object-position: 60% 58%; }
+
+.js .steps {
+  position: relative;
+  z-index: 1;
+  margin-top: -100vh;
+  margin-top: -100svh;
+}
+
+/* A card rises over the water and rests there while its picture holds. */
+.step {
+  display: flex;
+  align-items: flex-end;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+}
+
+.card {
+  position: sticky;
+  bottom: 1.5rem;
+  width: 100%;
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  pointer-events: auto;
+}
+.card p { margin: 0; }
+.card p + p { margin-top: .6rem; }
+.card sup { font-size: .6em; color: var(--ink-faint); }
+.card sup a { color: inherit; text-decoration: none; }
+
+/* ---- Report sections ------------------------------------------------- */
+
+.after {
+  position: relative;
+  z-index: 2;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 0;
+}
+
+.report section { padding-top: 0; }
+.story-body h3 { margin: 2.5rem 0 .5rem; font-size: 1.125rem; }
+.lede { font-size: 1.1875rem; }
+#sources .after { padding-bottom: var(--space); }
+
+/* Footnote marks stay gray, so color in the text means a link. */
+.story-body sup a { color: var(--ink-faint); }
+.story-body sup a:hover { color: var(--accent); text-decoration: underline; }
+
+/* A nav link lands with the section's rule just under the nav. */
+.story-page > section[id] { scroll-margin-top: calc(1rem - var(--space)); }
+.brief th { width: 8rem; }
+
+.quote {
+  margin: 2rem 0;
+  padding: 0 0 0 1.25rem;
+  border-left: 2px solid var(--ink);
+  font-size: 1.375rem;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.quote cite { display: block; margin-top: .5rem; color: var(--ink-soft); font-size: .875rem; font-style: normal; font-weight: 400; letter-spacing: 0; line-height: 1.45; }
+
+/* The cross-section: Today over Park, each in its own hairline frame, narrower than the wide measure. */
+
+.xsection {
+  position: relative;
+  z-index: 2;
+  max-width: calc(54rem + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: clamp(3.5rem, 8vh, 5rem) var(--gutter) 4rem;
+  background: var(--paper);
+}
+.xsection-panel { border: 1px solid var(--rule); padding: 1.25rem 1.5rem 1.5rem; }
+.xsection-panel + .xsection-panel { margin-top: 2.5rem; }
+.xsection-label { margin: 0 0 .75rem; color: var(--ink); font-size: .875rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.xsection img { display: block; width: 100%; height: auto; background: none; border: 0; }
+.xsection figcaption { max-width: var(--measure); margin-top: .75rem; color: var(--ink-soft); font-size: .875rem; }
+.xsection-site .site-view { position: relative; aspect-ratio: 8 / 5; overflow: hidden; }
+/* The full-screen aerial, cropped 1.75x to the measured section so its labels read at figure size. */
+.xsection-site .site-view img { position: absolute; left: -41%; top: -49%; width: 175%; max-width: none; height: 175%; }
+.eyeview { max-width: calc(40rem + 2 * var(--gutter)); padding-top: 0; }
+.eyeview .xsection-panel img { border-radius: 2px; }
+@media (max-width: 40rem) {
+  .xsection-site .site-view { aspect-ratio: 10 / 11; }
+  .xsection-site .site-view img { inset: 0; width: 100%; height: 100%; }
+  .xsection-panel { padding: .75rem .75rem 1rem; }
+  .xsection-panel + .xsection-panel { margin-top: 1.5rem; }
+}
+
+/* The clip pins in the middle of its own dark scene, holds while the reader scrolls, then scrolls away. */
+
+.clip {
+  position: relative;
+  z-index: 2;
+  height: 180vh;
+  height: 180svh;
+  background: var(--paper-sunk);
+}
+.clip-pin {
+  position: sticky;
+  top: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--nav-h));
+  height: calc(100svh - var(--nav-h));
+  padding: 1.5rem var(--gutter);
+  box-sizing: border-box;
+}
+.clip figure { display: flex; flex-direction: column; align-items: center; gap: 1rem; max-width: 100%; margin: 0; }
+.clip-frame { position: relative; max-width: 100%; }
+.clip video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(68vh, 42rem);
+  max-height: min(68svh, 42rem);
+  background: #000;
+}
+.clip-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4.5rem;
+  height: 4.5rem;
+  transform: translate(-50%, -50%);
+  background: var(--ink);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, .35);
+  cursor: pointer;
+}
+.clip-play::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-35%, -50%);
+  border-style: solid;
+  border-width: .8rem 0 .8rem 1.3rem;
+  border-color: transparent transparent transparent #fff;
+}
+.clip-play:hover, .clip-play:focus-visible { background: var(--accent); }
+.clip.playing .clip-play, html:not(.js) .clip-play { display: none; }
+.clip figcaption { max-width: 28rem; margin: 0; color: var(--ink-soft); text-align: center; }
+
+.photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1.5rem;
+  max-width: calc(var(--wide) + 2 * var(--gutter));
+  margin: 2rem auto 0;
+  padding: 0 var(--gutter);
+}
+.photos figure { margin: 0; }
+.photos .pos-62 { object-position: 50% 62%; }
+.photos .pos-55 { object-position: 50% 55%; }
+.photos .pos-45 { object-position: 50% 45%; }
+.photos .pos-42 { object-position: 50% 42%; }
+.photos .pos-30 { object-position: 50% 30%; }
+.photos img {
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  border: 0;
+}
+.after figure img { border: 0; }
+
+.story-body table.crossings td:first-child { font-weight: 400; }
+.story-body table.crossings { margin-top: 1rem; }
+.crossings .num { padding-left: 0; padding-right: 1rem; text-align: left; }
+
+details.log { margin: 1rem 0 2rem; }
+details.log summary { color: var(--ink); cursor: pointer; font-weight: 700; }
+
+/* ---- Phones ------------------------------------------------------------ */
+
+/* The picture on top, the card below it. */
+@media (max-width: 60rem) {
+  .step { padding: 0 var(--gutter); }
+  .card { max-width: none; font-size: 1.0625rem; padding: .85rem 1rem; bottom: .75rem; margin-bottom: .75rem; }
+
+  .map-base,
+  .layer img {
+    top: var(--nav-h);
+    bottom: auto;
+    height: 60vh;
+    height: 60svh;
+    object-position: 50% 50%;
+  }
+  .photo-layer img { object-position: 68% 50%; }
+  .path-layer img { object-position: 74% 50%; }
+
+}
+
+/* On phones a card fades once the next step takes over, so it never rises over the map. */
+@media (max-width: 60rem) {
+  .js .card { transition: opacity .2s ease; }
+  .js .step:not(.active) .card { opacity: 0; }
+}
+@media (max-width: 60rem) and (prefers-reduced-motion: reduce) {
+  .js .card { transition: none; }
+}
+
+/* Below about 58rem the nav folds behind a menu button, as across the suite.
+   Open, the links fill the screen under the nav on a sheet that covers the
+   page without moving it, and the page stops scrolling. The button's three
+   lines turn into a cross. Closed, the links leave the tab order once the
+   fade ends. */
+@media (max-width: 58rem) {
+  .site-nav { gap: .75rem; }
+  .site-nav-mark { margin-right: auto; }
+  .site-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    order: 3;
+    width: 2.2rem;
+    height: 2.14rem;
+    padding: 0;
+    color: var(--ink);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: background-color .2s ease;
+  }
+  .site-nav-toggle:hover, .site-nav.open .site-nav-toggle { background: var(--paper-sunk); }
+  .site-nav-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .site-nav-toggle svg { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .site-nav-toggle path {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+    transition: transform .28s cubic-bezier(.2, .7, .2, 1), opacity .18s ease;
+  }
+  .site-nav.open .bar-top { transform: rotate(45deg) translateY(5px); }
+  .site-nav.open .bar-mid { opacity: 0; }
+  .site-nav.open .bar-bottom { transform: rotate(-45deg) translateY(-5px); }
+
+  .site-nav-links {
+    display: block;
+    position: fixed;
+    top: var(--sheet-top, var(--nav-h));
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: .5rem var(--gutter) max(1.5rem, env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--paper);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+  }
+  .site-nav.open .site-nav-links { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .site-nav-links a { padding: .7rem 0; border-bottom: 0; font-size: 1rem; }
+  .site-nav-links a[aria-current="true"] { color: var(--accent); }
+  .site-nav-sub { display: block; margin: 0 0 .25rem; padding: 0 0 0 1rem; list-style: none; }
+  .site-nav-sub a { padding: .45rem 0; font-size: .9375rem; }
+  html.menu-locked { overflow: hidden; }
+}
+@media (max-width: 58rem) and (prefers-reduced-motion: reduce) {
+  .site-nav-links, .site-nav-toggle, .site-nav-toggle path { transition: none; }
+}
+/* Without the script the menu can't open, so the links stay in place. */
+@media (max-width: 58rem) {
+  html:not(.js) .site-nav { flex-wrap: wrap; padding-bottom: .5rem; }
+  html:not(.js) .site-nav-toggle { display: none; }
+  html:not(.js) .site-nav-links { display: flex; flex-wrap: wrap; gap: 0 1.25rem; position: static; flex-basis: 100%; padding: 0; opacity: 1; visibility: visible; transform: none; overflow: visible; }
+  html:not(.js) .site-nav-links a { padding: .3rem 0; font-size: .875rem; }
+  html:not(.js) .site-nav-sub { display: none; }
+}
+
+@media print {
+  .site-nav, .stage { display: none; }
+  .card { position: static; box-shadow: none; }
+  .after { padding: 0; }
+}
+
+/* ---- The closing question --------------------------------------------- */
+
+.closing {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: var(--space) auto 0;
+  padding: 0 var(--gutter);
+}
+.closing p { margin: 0; color: var(--ink-soft); font-size: 1.125rem; line-height: 1.5; }
+.story-body .closing .closing-q {
+  margin-bottom: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 2px solid var(--ink);
+  color: var(--ink);
+  font-size: clamp(1.75rem, 3.6vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+/* ---- Resources --------------------------------------------------------- */
+
+.resources { margin: 0; padding: 0; list-style: none; }
+.resources li { padding: .85rem 0; border-top: 1px solid var(--rule); line-height: 1.5; }
+.resources li:last-child { border-bottom: 1px solid var(--rule); }
+.resources li > a:first-child { font-weight: 700; }
+
+/* ---- Sources ----------------------------------------------------------- */
+
+#sources .sources { padding-left: 1.75rem; font-size: .8125rem; line-height: 1.45; }
+#sources .sources li { margin-bottom: .6rem; }
+#sources .sources a, #sources .sources code { overflow-wrap: anywhere; }
+
+/* ---- Footer ------------------------------------------------------------ */
+
+.story-body .footer { max-width: calc(var(--measure) + 2 * var(--gutter)); padding: 3rem var(--gutter) 3.5rem; border-top: 0; }
+.story-body .portfolio { padding-top: 0; border-top: 0; color: var(--ink-faint); }
+.story-body .portfolio a { color: inherit; }
+
+/* ---- Tilted map ---------------------------------------------------------- */
+
+/* Every map picture tilts the same way about its top edge, so overlays stay on their
+   photos and the frame stays full. Labels
+   stay upright, because story.js redraws them flat over the tilted map. */
+.js .stage img {
+  transform: perspective(1600px) rotateX(20deg);
+  transform-origin: 50% 0;
+}
+.flat-labels { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+@media (max-width: 60rem) {
+  .js .stage img { transform: perspective(1000px) rotateX(18deg); transform-origin: 50% 0; }
+}
+
+/* ---- Park section -------------------------------------------------------- */
+
+/* The views sit on one board: Today on the left, Park on the right, a row per view. */
+.board {
+  max-width: calc(var(--wide) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vh, 3.5rem) var(--gutter) 0;
+}
+.board-row { margin: 0; }
+.board-row + .board-row { margin-top: 2.5rem; }
+.board-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.board-cell { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-sunk); }
+.board-cell > img, .board-cell picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: none; border: 0; }
+
+/* The aerial is cropped 2x to the measured section, so its labels read at half width. */
+.board-cell.aerial picture img { left: -54%; top: -44.4%; width: 200%; max-width: none; height: auto; object-fit: initial; }
+
+.tag {
+  position: absolute; z-index: 1; top: .75rem; left: .75rem;
+  padding: .2rem .55rem;
+  background: rgba(255, 255, 255, .92); color: var(--ink);
+  font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+}
+.board figcaption { max-width: var(--measure); margin-top: .75rem; color: var(--ink-soft); font-size: .875rem; }
+.board figcaption strong { color: var(--ink); }
+
+/* The cross-section sits in its own tinted band, Today over Park, at one scale. */
+.xs-band {
+  margin-top: 2.5rem;
+  padding: clamp(3.5rem, 9vh, 5.5rem) var(--gutter) clamp(3rem, 7vh, 4.5rem);
+  background: var(--paper-sunk);
+}
+.xs-band-text { max-width: var(--measure); margin: 0 auto; }
+.xs-band-text h3 { margin-top: 0; }
+.xs-band-figure { max-width: 60rem; margin: 2.5rem auto 0; }
+.xs-band-panel + .xs-band-panel { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--rule); }
+.xs-band-figure img { display: block; width: 100%; height: auto; background: none; border: 0; }
+.xs-band-figure figcaption { max-width: var(--measure); margin: 1.5rem 0 0; color: var(--ink-soft); font-size: .875rem; }
+
+@media (max-width: 40rem) {
+  .board-pair { grid-template-columns: 1fr; }
+  .board-cell.aerial { aspect-ratio: 10 / 11; }
+  .board-cell.aerial picture img { inset: 0; width: 100%; height: 100%; }
+}
